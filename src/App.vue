@@ -4,8 +4,6 @@
 
 <script>
 import { VueEditor } from "vue2-editor/dist/vue2-editor.core.js";
-import rp from 'request-promise'
-import cheerio from 'cheerio'
 
 export default {
   name: 'app',
@@ -19,33 +17,7 @@ export default {
     content: function(newValue) {
       const pattern = /(http|https):\/\/[\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+/g
       const urls = newValue.match(pattern)
-      let ogpdata = []
       console.log(urls)
-      urls.forEach(async (url, i) => {
-        const options = {
-          uri: url,
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-          },
-          transform: (body) => {
-            return cheerio.load(body);
-          }
-        };
-        try {
-          const $ = await rp.get(options);
-           ogpdata[i] = {
-            title: $('title').text(),
-            description: $('meta[property="og:description"]').attr('content'),
-            ogimage: $('meta[property="og:image"]').attr('content'),
-            url:$('meta[property="og:url"]').attr('content')
-          };
-        } catch(error) {
-          console.error('Error:', error);
-        }
-      });
-
     }
   }
 }
